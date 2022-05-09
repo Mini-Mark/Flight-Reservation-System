@@ -1,0 +1,44 @@
+{
+	"Destination": {
+		"Phitsanulok": [
+			{
+				"Id": "1Phit",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			},
+			{
+				"Id": "2Phit",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			},
+			{
+				"Id": "3Phit",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			}
+		],
+		"Bankok": [
+			{
+				"Id": "1Bankok",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			},
+			{
+				"Id": "2Bankok",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			},
+			{
+				"Id": "3Bankok",
+				"Time_Start": "6:30",
+				"Time_End": "8:30",
+				"Price": "1200"
+			}
+		]
+	}
+}
