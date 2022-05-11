@@ -20,7 +20,7 @@ def main(*args):
     # Creates a toplevel widget.
     global _top1, _w1
     _top1 = root
-    _w1 = GUI.Search_page(_top1)
+    _w1 = GUI.Login_page(_top1)
     # Creates a toplevel widget.
     # global _top2, _w2
     # _top2 = tk.Toplevel(root)
@@ -33,7 +33,7 @@ def main(*args):
     # global _top4, _w4
     # _top4 = tk.Toplevel(root)
     # _w4 = GUI.Register_page(_top4)
-    # # Creates a toplevel widget.
+    # Creates a toplevel widget.
     # global _top5, _w5
     # _top5 = tk.Toplevel(root)
     # _w5 = GUI.Book_page(_top5)

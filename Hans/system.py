@@ -4,6 +4,10 @@ class Account:
     
     login_user = "0"
     
+    @staticmethod
+    def logout():
+        Account.login_user = "0"
+
     def login(self,username,password):
         fdata = open("./data/User.json")
         data = json.load(fdata)
@@ -132,14 +136,14 @@ class Book_Flight():
         self.Status: data["Status"]
     
     @staticmethod
-    def book(Source,Flight_ID,User_ID,Status):
+    def book(Source,Destination,Flight_ID,User_ID,Status):
         fdata = open("./data/Book.json")
         fdata = json.load(fdata)
         count = 1
         
         for i in fdata:
             count += 1
-        p={str(count): {"Flight_ID": str(Flight_ID),"Source": str(Source),"User_ID": str(User_ID),"Status": str(Status)}}
+        p={str(count): {"Flight_ID": str(Flight_ID),"Source": str(Source),"Destination": str(Destination),"User_ID": str(User_ID),"Status": str(Status)}}
         fdata.update(p)
         
         sourch_file = open("./data/Book.json", "w")
@@ -190,6 +194,15 @@ class Book_Flight():
                                 
                             })
         return dic
+
+    def getAllBookData():
+        fdata = open("./data/Book.json")
+        data = json.load(fdata)
+        count = 0
+        for i in data:
+            count += 1
+        return count
+
     
     
 class Ticket():
