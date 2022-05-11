@@ -3,13 +3,13 @@
         "Flight_ID": "01-HDY",
         "Source": "hatyai",
         "User_ID": "1",
-        "Status": "Cancel"
+        "Status": "Complete"
     },
     "2": {
         "Flight_ID": "02-HDY",
         "Source": "mae_hong_son",
         "User_ID": "1",
-        "Status": "Complete"
+        "Status": "Cancel"
     },
     "3": {
         "Flight_ID": "03-HDY",
@@ -21,12 +21,12 @@
         "Flight_ID": "02-KCC",
         "Source": "hua_hin",
         "User_ID": "1",
-        "Status": "Pending"
+        "Status": "Cancel"
     },
     "5": {
         "Flight_ID": "02-BKK",
         "Source": "phitsanulok",
         "User_ID": "1",
-        "Status": "Complete"
+        "Status": "Pending"
     }
 }

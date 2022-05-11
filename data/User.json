@@ -1,14 +1,46 @@
 {
-    "user":[{
-        "id":1,
-        "username": "Han",
-        "password":"1234",
-        "id_card":"16599820747430",
-        "phone": "0944944494"
-    },{ "id":2,
-        "username": "Mark",
-        "password":"1234",
-        "id_card":"19440553022899",
-        "phone": "0633044403"
-    }]
+    "user": [
+        {
+            "id": 0,
+            "username": "Guest",
+            "password": "",
+            "id_card": "",
+            "phone": ""
+        },
+        {
+            "id": 1,
+            "username": "Han",
+            "password": "1234",
+            "id_card": "16599820747430",
+            "phone": "0944944494"
+        },
+        {
+            "id": 2,
+            "username": "Mark",
+            "password": "1234",
+            "id_card": "19440553022899",
+            "phone": "0633044403"
+        },
+        {
+            "id": 4,
+            "username": "MiniMark",
+            "password": "1234",
+            "id_card": "16595959999999",
+            "phone": "0944444444"
+        },
+        {
+            "id": 5,
+            "username": "Tester1",
+            "password": "123123",
+            "id_card": "123123123123123",
+            "phone": "0812333333"
+        },
+        {
+            "id": 6,
+            "username": "Tester2",
+            "password": "1234",
+            "id_card": "123123123123",
+            "phone": "123123123123"
+        }
+    ]
 }

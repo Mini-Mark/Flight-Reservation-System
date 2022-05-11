@@ -2,17 +2,24 @@ import json
 
 class Account:
     
+    login_user = "0"
+    
     def login(self,username,password):
         fdata = open("./data/User.json")
         data = json.load(fdata)
         self.username = username
         self.password = password
+        
+        if(self.username == "" or self.password == ""):
+            return False
+            
         for i in data['user']:
             l=i["username"] 
             if self.username == l:
                 for y in data['user']:
                         y=y["password"]
                         if self.password == y and self.username == l:
+                                Account.login_user = i['id']
                                 return i['id']
         
         return False
@@ -32,16 +39,17 @@ class Account:
             
             for i in data["user"]:
                 check_user = i["username"]
-                print(check_user)
                 if self.username == check_user:
-                    print (self.username)
                     return False
 
             data["user"].append(p)
 
             with open ("./data/User.json", "w") as f:
                 json.dump(data, f, indent=4)
-    
+        
+    @staticmethod        
+    def getLoginUser():
+        return Account.login_user
 
 class User():
     def __init__(self,user_id):
@@ -67,7 +75,7 @@ class User():
 
 class Guest(User):
     def __init__(self):
-        super().__init__(0)
+        super().__init__("0")
 
 class Flight():
     @staticmethod
@@ -126,7 +134,7 @@ class Book_Flight():
         p={str(count): {"Flight_ID": str(Flight_ID),"Source": str(Source),"User_ID": str(User_ID),"Status": str(Status)}}
         fdata.update(p)
         
-        sourch_file = open("Book.json", "w")
+        sourch_file = open("./data/Book.json", "w")
         json.dump(fdata, sourch_file, indent=4)
         return str(count)
     
@@ -134,19 +142,19 @@ class Book_Flight():
     def pay(self):
         self.Status = "Complete"
 
-        with open ("Book.json") as json_file:
+        with open ("./data/Book.json") as json_file:
             data = json.load(json_file)
             data[str(self.Book_id)]["Status"] = self.Status
-            sourch_file = open("Book.json", "w")
+            sourch_file = open("./data/Book.json", "w")
             json.dump(data, sourch_file, indent=4)
             
     def cancel(self):
         self.Status = "Cancel"
 
-        with open ("Book.json") as json_file:
+        with open ("./data/Book.json") as json_file:
             data = json.load(json_file)
             data[str(self.Book_id)]["Status"] = self.Status
-            sourch_file = open("Book.json", "w")
+            sourch_file = open("./data/Book.json", "w")
             json.dump(data, sourch_file, indent=4)
     
     def getDetail(self):
@@ -168,7 +176,11 @@ class Book_Flight():
         dic = []
         for i in data:
                 if str(user_id) == str(data[i]['User_ID']):
-                        dic.append(data[i])
+                        dic.append({
+                            str(i):
+                                data[i]
+                                
+                            })
         return dic
     
     

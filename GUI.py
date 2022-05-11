@@ -9,16 +9,25 @@ import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
+from tkinter import messagebox
 
 import GUI_support
+
+import system
+
+def changePage(oldpage,newpage):
+        oldpage.destroy()
+        root = tk.Tk()
+        newpage(root)
 
 class Search_page:
         
     def SearchFlight(self):
         self.top.destroy()
         root = tk.Tk()
-        Flight_page(root)
-        
+        Flight_page(self.combobox.get(), self.combobox1.get(), self.combobox2.get(),root)
+
+
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -53,6 +62,9 @@ class Search_page:
 
         self.top = top
         self.combobox = tk.StringVar()
+        self.combobox1 = tk.StringVar()
+        self.combobox2 = tk.StringVar()
+        
 
         self.Button_search = tk.Button(self.top)
         self.Button_search.place(relx=0.385, rely=0.778, height=34, width=137)
@@ -118,31 +130,38 @@ class Search_page:
         self.Label_date.configure(highlightbackground="#d9d9d9")
         self.Label_date.configure(highlightcolor="black")
         self.Label_date.configure(text='''Date''')
+        
+        
 
-        self.Combobox_depart = ttk.Combobox(self.top)
+
+        self.Combobox_depart = ttk.Combobox(self.top, values=system.Source.getAllSource())
         self.Combobox_depart.place(relx=0.25, rely=0.252, relheight=0.048
                 , relwidth=0.544)
         self.Combobox_depart.configure(textvariable=self.combobox)
         self.Combobox_depart.configure(takefocus="")
 
-        self.Combobox_fly = ttk.Combobox(self.top)
+        self.Combobox_fly = ttk.Combobox(self.top, values=system.Flight.getAllDestination())
         self.Combobox_fly.place(relx=0.25, rely=0.458, relheight=0.048
                 , relwidth=0.544)
-        self.Combobox_fly.configure(textvariable=self.combobox)
+        self.Combobox_fly.configure(textvariable=self.combobox1)
         self.Combobox_fly.configure(takefocus="")
 
-        self.Entry_date = tk.Entry(self.top)
-        self.Entry_date.place(relx=0.25, rely=0.664, height=20, relwidth=0.544)
-        self.Entry_date.configure(background="white")
-        self.Entry_date.configure(disabledforeground="#a3a3a3")
-        self.Entry_date.configure(font="TkFixedFont")
-        self.Entry_date.configure(foreground="#000000")
-        self.Entry_date.configure(highlightbackground="#d9d9d9")
-        self.Entry_date.configure(highlightcolor="black")
-        self.Entry_date.configure(insertbackground="black")
-        self.Entry_date.configure(selectbackground="blue")
-        self.Entry_date.configure(selectforeground="white")
+        self.Entry_date = ttk.Combobox(self.top)
+        self.Entry_date=DateEntry(selectmode='day',background= "darkturquoise")
+        self.Entry_date.place(relx=0.25, rely=0.664, relheight=0.048, relwidth=0.544)
+        self.Entry_date.configure(textvariable=self.combobox2)
+        self.Entry_date.configure(takefocus="")
+        # self.Entry_date.configure(background="white")
+        # self.Entry_date.configure(disabledforeground="#a3a3a3")
+        # self.Entry_date.configure(font="TkFixedFont")
+        # self.Entry_date.configure(foreground="#000000")
+        # self.Entry_date.configure(highlightbackground="#d9d9d9")
+        # self.Entry_date.configure(highlightcolor="black")
+        # self.Entry_date.configure(insertbackground="black")
+        # self.Entry_date.configure(selectbackground="blue")
+        # self.Entry_date.configure(selectforeground="white")
 
+        
         self.Button_history = tk.Button(self.top)
         self.Button_history.place(relx=0.846, rely=0.046, height=24, width=47)
         self.Button_history.configure(activebackground="#ececec")
@@ -156,8 +175,9 @@ class Search_page:
         self.Button_history.configure(pady="0")
         self.Button_history.configure(text='''History''')
 
+
 class Flight_page:
-    def __init__(self, top=None):
+    def __init__(self,Source, Destination, Date, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -181,6 +201,20 @@ class Flight_page:
         top.configure(highlightcolor="black")
 
         self.top = top
+        self.destination = Destination
+        self.source = Source
+        self.date = Date
+
+        user = system.User(system.Account.getLoginUser())
+
+        
+        # system.User.searchFlight(self.source,self.destination)
+        flight = user.searchFlight(self.source,self.destination)
+
+        print(flight[0]["id"])
+        print(flight[1]["id"])
+        print(flight[2]["id"])
+        
 
         self.Button_back = tk.Button(self.top)
         self.Button_back.place(relx=0.038, rely=0.046, height=24, width=47)
@@ -194,6 +228,7 @@ class Flight_page:
         self.Button_back.configure(highlightcolor="black")
         self.Button_back.configure(pady="0")
         self.Button_back.configure(text='''BACK''')
+        self.Button_back.configure(command=self.search)
 
         self.Label_depart = tk.Label(self.top)
         self.Label_depart.place(relx=0.096, rely=0.137, height=21, width=84)
@@ -208,7 +243,7 @@ class Flight_page:
         self.Label_depart.configure(highlightcolor="black")
         self.Label_depart.configure(text='''Depart from''')
 
-        self.Label_origin = tk.Label(self.top)
+        self.Label_origin = tk.Label(self.top,)
         self.Label_origin.place(relx=0.25, rely=0.137, height=21, width=34)
         self.Label_origin.configure(activebackground="#e4e4e4")
         self.Label_origin.configure(activeforeground="black")
@@ -219,8 +254,7 @@ class Flight_page:
         self.Label_origin.configure(foreground="#000000")
         self.Label_origin.configure(highlightbackground="#d9d9d9")
         self.Label_origin.configure(highlightcolor="black")
-        self.Label_origin.configure(text='''XXX''')
-
+        self.Label_origin.configure(text=self.source)
         self.Label_to = tk.Label(self.top)
         self.Label_to.place(relx=0.327, rely=0.137, height=21, width=64)
         self.Label_to.configure(activebackground="#e4e4e4")
@@ -245,7 +279,7 @@ class Flight_page:
         self.Label_destination.configure(foreground="#000000")
         self.Label_destination.configure(highlightbackground="#d9d9d9")
         self.Label_destination.configure(highlightcolor="black")
-        self.Label_destination.configure(text='''XXX''')
+        self.Label_destination.configure(text=self.destination)
 
         self.Frame1 = tk.Frame(self.top)
         self.Frame1.place(relx=0.077, rely=0.206, relheight=0.172
@@ -257,6 +291,7 @@ class Flight_page:
         self.Frame1.configure(highlightbackground="#d9d9d9")
         self.Frame1.configure(highlightcolor="black")
 
+        
         self.Label_timestart1 = tk.Label(self.Frame1)
         self.Label_timestart1.place(relx=0.092, rely=0.267, height=21, width=35)
         self.Label_timestart1.configure(activebackground="#f9f9f9")
@@ -267,7 +302,7 @@ class Flight_page:
         self.Label_timestart1.configure(foreground="#000000")
         self.Label_timestart1.configure(highlightbackground="#d9d9d9")
         self.Label_timestart1.configure(highlightcolor="black")
-        self.Label_timestart1.configure(text='''00:00''')
+        self.Label_timestart1.configure(text=flight[0]["start"])
 
         self.Label_origin1 = tk.Label(self.Frame1)
         self.Label_origin1.place(relx=0.046, rely=0.533, height=21, width=75)
@@ -279,7 +314,7 @@ class Flight_page:
         self.Label_origin1.configure(foreground="#000000")
         self.Label_origin1.configure(highlightbackground="#d9d9d9")
         self.Label_origin1.configure(highlightcolor="black")
-        self.Label_origin1.configure(text='''XXX''')
+        self.Label_origin1.configure(text=self.source)
 
         self.Label1 = tk.Label(self.Frame1)
         self.Label1.place(relx=0.23, rely=0.267, height=21, width=35)
@@ -304,7 +339,7 @@ class Flight_page:
         self.Label_timearrival1.configure(foreground="#000000")
         self.Label_timearrival1.configure(highlightbackground="#d9d9d9")
         self.Label_timearrival1.configure(highlightcolor="black")
-        self.Label_timearrival1.configure(text='''00:00''')
+        self.Label_timearrival1.configure(text=flight[0]["end"])
 
         self.Label_destination1 = tk.Label(self.Frame1)
         self.Label_destination1.place(relx=0.322, rely=0.533, height=21
@@ -317,7 +352,7 @@ class Flight_page:
         self.Label_destination1.configure(foreground="#000000")
         self.Label_destination1.configure(highlightbackground="#d9d9d9")
         self.Label_destination1.configure(highlightcolor="black")
-        self.Label_destination1.configure(text='''XXX''')
+        self.Label_destination1.configure(text=flight[0]["name"])
 
         self.Button_choose1 = tk.Button(self.Frame1)
         self.Button_choose1.place(relx=0.759, rely=0.267, height=34, width=77)
@@ -342,7 +377,7 @@ class Flight_page:
         self.Label_price1.configure(foreground="#000000")
         self.Label_price1.configure(highlightbackground="#d9d9d9")
         self.Label_price1.configure(highlightcolor="black")
-        self.Label_price1.configure(text='''0000''')
+        self.Label_price1.configure(text=flight[0]["price"])
 
         self.Label_baht1 = tk.Label(self.Frame1)
         self.Label_baht1.place(relx=0.621, rely=0.533, height=21, width=35)
@@ -376,7 +411,7 @@ class Flight_page:
         self.Label_timestart2.configure(foreground="#000000")
         self.Label_timestart2.configure(highlightbackground="#d9d9d9")
         self.Label_timestart2.configure(highlightcolor="black")
-        self.Label_timestart2.configure(text='''00:00''')
+        self.Label_timestart2.configure(text=flight[1]["start"])
 
         self.Label_origin2 = tk.Label(self.Frame2)
         self.Label_origin2.place(relx=0.046, rely=0.533, height=21, width=75)
@@ -388,7 +423,7 @@ class Flight_page:
         self.Label_origin2.configure(foreground="#000000")
         self.Label_origin2.configure(highlightbackground="#d9d9d9")
         self.Label_origin2.configure(highlightcolor="black")
-        self.Label_origin2.configure(text='''XXX''')
+        self.Label_origin2.configure(text=self.source)
 
         self.Label1 = tk.Label(self.Frame2)
         self.Label1.place(relx=0.23, rely=0.267, height=21, width=35)
@@ -413,7 +448,7 @@ class Flight_page:
         self.Label_timearrival2.configure(foreground="#000000")
         self.Label_timearrival2.configure(highlightbackground="#d9d9d9")
         self.Label_timearrival2.configure(highlightcolor="black")
-        self.Label_timearrival2.configure(text='''00:00''')
+        self.Label_timearrival2.configure(text=flight[1]["end"])
 
         self.Label_destination2 = tk.Label(self.Frame2)
         self.Label_destination2.place(relx=0.322, rely=0.533, height=21
@@ -426,7 +461,7 @@ class Flight_page:
         self.Label_destination2.configure(foreground="#000000")
         self.Label_destination2.configure(highlightbackground="#d9d9d9")
         self.Label_destination2.configure(highlightcolor="black")
-        self.Label_destination2.configure(text='''XXX''')
+        self.Label_destination2.configure(text=flight[1]["name"])
 
         self.Button_choose2 = tk.Button(self.Frame2)
         self.Button_choose2.place(relx=0.759, rely=0.267, height=34, width=77)
@@ -451,7 +486,7 @@ class Flight_page:
         self.Label_price2.configure(foreground="#000000")
         self.Label_price2.configure(highlightbackground="#d9d9d9")
         self.Label_price2.configure(highlightcolor="black")
-        self.Label_price2.configure(text='''0000''')
+        self.Label_price2.configure(text=flight[1]["price"])
 
         self.Label_baht2 = tk.Label(self.Frame2)
         self.Label_baht2.place(relx=0.621, rely=0.533, height=21, width=35)
@@ -485,7 +520,7 @@ class Flight_page:
         self.Label_timestart3.configure(foreground="#000000")
         self.Label_timestart3.configure(highlightbackground="#d9d9d9")
         self.Label_timestart3.configure(highlightcolor="black")
-        self.Label_timestart3.configure(text='''00:00''')
+        self.Label_timestart3.configure(text=flight[2]["start"])
 
         self.Label_origin3 = tk.Label(self.Frame3)
         self.Label_origin3.place(relx=0.046, rely=0.533, height=21, width=75)
@@ -497,7 +532,7 @@ class Flight_page:
         self.Label_origin3.configure(foreground="#000000")
         self.Label_origin3.configure(highlightbackground="#d9d9d9")
         self.Label_origin3.configure(highlightcolor="black")
-        self.Label_origin3.configure(text='''XXX''')
+        self.Label_origin3.configure(text=self.source)
 
         self.Label1_1 = tk.Label(self.Frame3)
         self.Label1_1.place(relx=0.23, rely=0.267, height=21, width=35)
@@ -522,7 +557,7 @@ class Flight_page:
         self.Label_timearrival3.configure(foreground="#000000")
         self.Label_timearrival3.configure(highlightbackground="#d9d9d9")
         self.Label_timearrival3.configure(highlightcolor="black")
-        self.Label_timearrival3.configure(text='''00:00''')
+        self.Label_timearrival3.configure(text=flight[2]["end"])
 
         self.Label_destination3 = tk.Label(self.Frame3)
         self.Label_destination3.place(relx=0.322, rely=0.533, height=21
@@ -535,7 +570,7 @@ class Flight_page:
         self.Label_destination3.configure(foreground="#000000")
         self.Label_destination3.configure(highlightbackground="#d9d9d9")
         self.Label_destination3.configure(highlightcolor="black")
-        self.Label_destination3.configure(text='''XXX''')
+        self.Label_destination3.configure(text=flight[2]["name"])
 
         self.Button_choose3 = tk.Button(self.Frame3)
         self.Button_choose3.place(relx=0.759, rely=0.267, height=34, width=77)
@@ -560,7 +595,7 @@ class Flight_page:
         self.Label_price3.configure(foreground="#000000")
         self.Label_price3.configure(highlightbackground="#d9d9d9")
         self.Label_price3.configure(highlightcolor="black")
-        self.Label_price3.configure(text='''0000''')
+        self.Label_price3.configure(text=flight[2]["price"])
 
         self.Label_baht3 = tk.Label(self.Frame3)
         self.Label_baht3.place(relx=0.621, rely=0.533, height=21, width=35)
@@ -586,6 +621,12 @@ class Flight_page:
         self.Button_history.configure(highlightcolor="black")
         self.Button_history.configure(pady="0")
         self.Button_history.configure(text='''History''')
+        self.Button_history.configure(command=self.history)
+
+    def history(self):
+        changePage(self.top,History_page)
+    def search(self):
+        changePage(self.top,Search_page)
 
 class Login_page:
     def __init__(self, top=None):
@@ -664,6 +705,8 @@ class Login_page:
         self.Button_login.configure(highlightcolor="#000000")
         self.Button_login.configure(pady="0")
         self.Button_login.configure(text='''LOGIN''')
+        self.Button_login.configure(command=self.login)
+        
 
         self.Button1 = tk.Button(self.top)
         self.Button1.place(relx=0.404, rely=0.619, height=24, width=87)
@@ -677,6 +720,7 @@ class Login_page:
         self.Button1.configure(highlightcolor="black")
         self.Button1.configure(pady="0")
         self.Button1.configure(text='''REGISTER''')
+        self.Button1.configure(command=self.register)
 
         self.Label1 = tk.Label(self.top)
         self.Label1.place(relx=0.288, rely=0.548, height=21, width=214)
@@ -713,6 +757,20 @@ class Login_page:
         self.Entry_pass.configure(insertbackground="black")
         self.Entry_pass.configure(selectbackground="blue")
         self.Entry_pass.configure(selectforeground="white")
+        self.Entry_pass.configure(show="*")
+        
+    def login(self):
+        user = system.Account().login(self.Entry_user.get(),self.Entry_pass.get())
+        
+        if(user != False):
+                messagebox.showinfo("SUCCESS", "Login Success !!")
+                changePage(self.top,Search_page)
+        else:
+                messagebox.showerror("ERROR", "Username or password have something wrong!")
+        
+
+    def register(self):
+        changePage(self.top,Register_page)
 
 class Register_page:
     def __init__(self, top=None):
@@ -829,6 +887,7 @@ class Register_page:
         self.Button_register.configure(highlightcolor="black")
         self.Button_register.configure(pady="0")
         self.Button_register.configure(text='''REGISTER''')
+        self.Button_register.configure(command=self.register)
 
         self.Button_back = tk.Button(self.top)
         self.Button_back.place(relx=0.038, rely=0.046, height=24, width=47)
@@ -842,6 +901,7 @@ class Register_page:
         self.Button_back.configure(highlightcolor="black")
         self.Button_back.configure(pady="0")
         self.Button_back.configure(text='''BACK''')
+        self.Button_back.configure(command=self.back)
 
         self.Entry_ID = tk.Entry(self.top)
         self.Entry_ID.place(relx=0.212, rely=0.195, height=20, relwidth=0.269)
@@ -891,6 +951,7 @@ class Register_page:
         self.Entry_pass.configure(insertbackground="black")
         self.Entry_pass.configure(selectbackground="blue")
         self.Entry_pass.configure(selectforeground="white")
+        self.Entry_pass.configure(show="*")
 
         self.Entry_repass = tk.Entry(self.top)
         self.Entry_repass.place(relx=0.212, rely=0.675, height=20
@@ -904,6 +965,30 @@ class Register_page:
         self.Entry_repass.configure(insertbackground="black")
         self.Entry_repass.configure(selectbackground="blue")
         self.Entry_repass.configure(selectforeground="white")
+        self.Entry_repass.configure(show="*")
+
+    def back(self):
+        changePage(self.top,Login_page)
+        
+    def register(self):
+        id_card = self.Entry_ID.get()
+        phone = self.Entry_phone.get()
+        username = self.Entry_user.get()
+        password = self.Entry_pass.get()
+        repassword = self.Entry_repass.get()
+        
+        if(password != repassword):
+            messagebox.showerror("ERROR", "Password and repassword have something wrong")
+            return False
+        else:
+            user = system.Account().register(username,password,id_card,phone)
+            
+            if(user != False):
+                messagebox.showinfo("SUCCESS","Register Success !!!")
+                changePage(self.top,Login_page)
+            else:
+                messagebox.showerror("ERROR", "Data have something wrong can't create new user")
+                return False
 
 class Book_page:
     def __init__(self, top=None):
@@ -943,6 +1028,7 @@ class Book_page:
         self.Button_back.configure(highlightcolor="black")
         self.Button_back.configure(pady="0")
         self.Button_back.configure(text='''BACK''')
+        self.Button_back.configure(command=self.back)
 
         self.Button_book = tk.Button(self.top)
         self.Button_book.place(relx=0.635, rely=0.206, height=44, width=97)
@@ -956,6 +1042,11 @@ class Book_page:
         self.Button_book.configure(highlightcolor="black")
         self.Button_book.configure(pady="0")
         self.Button_book.configure(text='''BOOK''')
+        waitflightid = '01-HDY'
+        a = system.Flight.getFlightById(waitflightid)['name']
+        waitsource = "Bankok"
+        waituserid = '1'
+        self.Button_book.configure(command=(system.Book_Flight.book(waitsource,a,waitflightid,waituserid,'pending') and self.payment))
 
         self.Label_details = tk.Label(self.top)
         self.Label_details.place(relx=0.192, rely=0.092, height=23, width=334)
@@ -983,7 +1074,7 @@ class Book_page:
         self.Label_due.configure(text='''Date :''')
 
         self.Label_date = tk.Label(self.top)
-        self.Label_date.place(relx=0.327, rely=0.275, height=23, width=74)
+        self.Label_date.place(relx=0.240, rely=0.275, height=23, width=74)
         self.Label_date.configure(activebackground="#f9f9f9")
         self.Label_date.configure(activeforeground="black")
         self.Label_date.configure(anchor='w')
@@ -993,7 +1084,8 @@ class Book_page:
         self.Label_date.configure(foreground="#000000")
         self.Label_date.configure(highlightbackground="#d9d9d9")
         self.Label_date.configure(highlightcolor="black")
-        self.Label_date.configure(text='''00/00/00''')
+        waittime ="10/05/22"
+        self.Label_date.configure(text=waittime)
 
         self.Label_baht = tk.Label(self.top)
         self.Label_baht.place(relx=0.173, rely=0.206, height=23, width=74)
@@ -1009,7 +1101,7 @@ class Book_page:
         self.Label_baht.configure(text='''Price/Baht :''')
 
         self.Label_price = tk.Label(self.top)
-        self.Label_price.place(relx=0.327, rely=0.206, height=23, width=74)
+        self.Label_price.place(relx=0.300, rely=0.206, height=23, width=74)
         self.Label_price.configure(activebackground="#f9f9f9")
         self.Label_price.configure(activeforeground="black")
         self.Label_price.configure(anchor='w')
@@ -1019,7 +1111,7 @@ class Book_page:
         self.Label_price.configure(foreground="#000000")
         self.Label_price.configure(highlightbackground="#d9d9d9")
         self.Label_price.configure(highlightcolor="black")
-        self.Label_price.configure(text='''0000''')
+        self.Label_price.configure(text=system.Flight.getFlightById(waitflightid)['price'])
 
         self.Frame1 = tk.Frame(self.top)
         self.Frame1.place(relx=0.173, rely=0.342, relheight=0.471
@@ -1053,7 +1145,7 @@ class Book_page:
         self.Label_timestart.configure(foreground="#000000")
         self.Label_timestart.configure(highlightbackground="#d9d9d9")
         self.Label_timestart.configure(highlightcolor="black")
-        self.Label_timestart.configure(text='''00:00''')
+        self.Label_timestart.configure(text=system.Flight.getFlightById(waitflightid)['start'])
 
         self.Label2 = tk.Label(self.Frame1)
         self.Label2.place(relx=0.232, rely=0.098, height=23, width=174)
@@ -1077,7 +1169,7 @@ class Book_page:
         self.Label_origin.configure(foreground="#000000")
         self.Label_origin.configure(highlightbackground="#d9d9d9")
         self.Label_origin.configure(highlightcolor="black")
-        self.Label_origin.configure(text='''XXX''')
+        self.Label_origin.configure(text=waitsource)
 
         self.Label_timearrival = tk.Label(self.Frame1)
         self.Label_timearrival.place(relx=0.696, rely=0.487, height=23, width=50)
@@ -1090,7 +1182,7 @@ class Book_page:
         self.Label_timearrival.configure(foreground="#000000")
         self.Label_timearrival.configure(highlightbackground="#d9d9d9")
         self.Label_timearrival.configure(highlightcolor="black")
-        self.Label_timearrival.configure(text='''00:00''')
+        self.Label_timearrival.configure(text=system.Flight.getFlightById(waitflightid)['end'])
 
         self.Label_destination = tk.Label(self.Frame1)
         self.Label_destination.place(relx=0.638, rely=0.634, height=23, width=90)
@@ -1103,7 +1195,7 @@ class Book_page:
         self.Label_destination.configure(foreground="#000000")
         self.Label_destination.configure(highlightbackground="#d9d9d9")
         self.Label_destination.configure(highlightcolor="black")
-        self.Label_destination.configure(text='''XXX''')
+        self.Label_destination.configure(text=system.Flight.getFlightById(waitflightid)['name'])
 
         self.Label_timeduration = tk.Label(self.Frame1)
         self.Label_timeduration.place(relx=0.232, rely=0.196, height=23
@@ -1116,20 +1208,34 @@ class Book_page:
         self.Label_timeduration.configure(foreground="#000000")
         self.Label_timeduration.configure(highlightbackground="#d9d9d9")
         self.Label_timeduration.configure(highlightcolor="black")
-        self.Label_timeduration.configure(text='''xxh xxmin''')
+        t1 = datetime.strptime(system.Flight.getFlightById(waitflightid)['start'],'%H:%M')
+        t2 = datetime.strptime(system.Flight.getFlightById(waitflightid)['end'],'%H:%M')
+        time = (t2-t1)
+        time = str(time)
+        datem = datetime.strptime(time,"%H:%M:%S")
+        time = datem.hour,"hour",datem.minute,"minute"
+        # print (type(time))
+        self.Label_timeduration.configure(text=time)
 
-        self.Button_history = tk.Button(self.top)
-        self.Button_history.place(relx=0.865, rely=0.046, height=24, width=47)
-        self.Button_history.configure(activebackground="#ececec")
-        self.Button_history.configure(activeforeground="#000000")
-        self.Button_history.configure(background="#d9d9d9")
-        self.Button_history.configure(compound='left')
-        self.Button_history.configure(disabledforeground="#a3a3a3")
-        self.Button_history.configure(foreground="#000000")
-        self.Button_history.configure(highlightbackground="#d9d9d9")
-        self.Button_history.configure(highlightcolor="black")
-        self.Button_history.configure(pady="0")
-        self.Button_history.configure(text='''History''')
+        # self.Button_history = tk.Button(self.top)
+        # self.Button_history.place(relx=0.865, rely=0.046, height=24, width=47)
+        # self.Button_history.configure(activebackground="#ececec")
+        # self.Button_history.configure(activeforeground="#000000")
+        # self.Button_history.configure(background="#d9d9d9")
+        # self.Button_history.configure(compound='left')
+        # self.Button_history.configure(disabledforeground="#a3a3a3")
+        # self.Button_history.configure(foreground="#000000")
+        # self.Button_history.configure(highlightbackground="#d9d9d9")
+        # self.Button_history.configure(highlightcolor="black")
+        # self.Button_history.configure(pady="0")
+        # self.Button_history.configure(text='''History''')
+        # self.Button_history.configure(command=self.history)
+    def payment(self):
+        changePage(self.top,Payment_page)
+    def history(self):
+        changePage(self.top,History_page)
+    def back(self):
+        changePage(self.top,Flight_page)
 
 class Payment_page:
     def __init__(self, top=None):
@@ -1196,7 +1302,7 @@ class Payment_page:
         self.Label_payment.configure(text='''Payment''')
 
         self.Label_origin = tk.Label(self.top)
-        self.Label_origin.place(relx=0.485, rely=0.412, height=18, width=25)
+        self.Label_origin.place(relx=0.485, rely=0.412, height=18, width=250)
         self.Label_origin.configure(activebackground="#f9f9f9")
         self.Label_origin.configure(activeforeground="black")
         self.Label_origin.configure(anchor='w')
@@ -1206,7 +1312,8 @@ class Payment_page:
         self.Label_origin.configure(foreground="#000000")
         self.Label_origin.configure(highlightbackground="#d9d9d9")
         self.Label_origin.configure(highlightcolor="black")
-        self.Label_origin.configure(text='''XXX''')
+        waitbooktid = system.Book_Flight.getAllBookData()
+        self.Label_origin.configure(text=system.Book_Flight.getBookDetailById(waitbooktid)['Source'])
 
         self.Label1 = tk.Label(self.top)
         self.Label1.place(relx=0.593, rely=0.412, height=17, width=24)
@@ -1220,7 +1327,7 @@ class Payment_page:
         self.Label1.configure(text='''>''')
 
         self.Label_destination = tk.Label(self.top)
-        self.Label_destination.place(relx=0.674, rely=0.412, height=17, width=24)
+        self.Label_destination.place(relx=0.674, rely=0.412, height=17, width=250)
 
         self.Label_destination.configure(activebackground="#f9f9f9")
         self.Label_destination.configure(activeforeground="black")
@@ -1231,7 +1338,7 @@ class Payment_page:
         self.Label_destination.configure(foreground="#000000")
         self.Label_destination.configure(highlightbackground="#d9d9d9")
         self.Label_destination.configure(highlightcolor="black")
-        self.Label_destination.configure(text='''XXX''')
+        self.Label_destination.configure(text=system.Book_Flight.getBookDetailById(waitbooktid)['Destination'])
 
         self.Label_depart = tk.Label(self.top)
         self.Label_depart.place(relx=0.243, rely=0.412, height=17, width=75)
@@ -1270,7 +1377,8 @@ class Payment_page:
         self.Label_price.configure(foreground="#000000")
         self.Label_price.configure(highlightbackground="#d9d9d9")
         self.Label_price.configure(highlightcolor="black")
-        self.Label_price.configure(text='''0000''')
+        Flight_ID = system.Book_Flight.getBookDetailById(waitbooktid)['Flight_ID']
+        self.Label_price.configure(text=system.Flight.getFlightById(Flight_ID)['price'])
 
         self.Label_name = tk.Label(self.top)
         self.Label_name.place(relx=0.243, rely=0.192, height=17, width=75)
@@ -1309,7 +1417,8 @@ class Payment_page:
         self.Label_ID.configure(foreground="#000000")
         self.Label_ID.configure(highlightbackground="#d9d9d9")
         self.Label_ID.configure(highlightcolor="black")
-        self.Label_ID.configure(text='''1234567891234''')
+        waiteruserid = system.Book_Flight.getBookDetailById(waitbooktid)['User_ID']
+        self.Label_ID.configure(text=system.User.getUserById(waiteruserid)['id_card'])
 
         self.Label_user = tk.Label(self.top)
         self.Label_user.place(relx=0.485, rely=0.192, height=17, width=81)
@@ -1322,7 +1431,7 @@ class Payment_page:
         self.Label_user.configure(foreground="#000000")
         self.Label_user.configure(highlightbackground="#d9d9d9")
         self.Label_user.configure(highlightcolor="black")
-        self.Label_user.configure(text='''Kunthida''')
+        self.Label_user.configure(text=system.User.getUserById(waiteruserid)['username'])
 
         self.Label_baht = tk.Label(self.top)
         self.Label_baht.place(relx=0.674, rely=0.522, height=17, width=54)
@@ -1363,6 +1472,10 @@ class Payment_page:
 
 class History_page:
     def __init__(self, top=None):
+            
+        user_id = "1"
+            
+            
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -1412,6 +1525,8 @@ class History_page:
         self.Button_back.configure(highlightcolor="black")
         self.Button_back.configure(pady="0")
         self.Button_back.configure(text='''BACK''')
+        self.Button_back.configure(command=self.back)
+        
 
         self.Label2 = tk.Label(self.top)
         self.Label2.place(relx=0.538, rely=0.137, height=21, width=44)
@@ -1436,82 +1551,121 @@ class History_page:
         self.Label2.configure(highlightbackground="#d9d9d9")
         self.Label2.configure(highlightcolor="black")
         self.Label2.configure(text='''Status''')
+        
+        y_loc = 0.22
+        
+        labels_departure = []
+        labels_price = []
+        buttons_price = []
+        
+        for flight in system.Book_Flight.getBookHistoryByUserId(user_id):
+                book_id = str(list(flight)[0])
+                
+                
+                flight_data = system.Flight.getFlightById(flight[book_id]["Flight_ID"])
+                
+                Label_departure1 = tk.Label(self.top)
+                Label_departure1.configure(activebackground="#f9f9f9")
+                Label_departure1.configure(activeforeground="black")
+                Label_departure1.configure(anchor='w')
+                Label_departure1.configure(background="#e4e4e4")
+                Label_departure1.configure(compound='left')
+                Label_departure1.configure(disabledforeground="#a3a3a3")
+                Label_departure1.configure(foreground="#000000")
+                Label_departure1.configure(highlightbackground="#d9d9d9")
+                Label_departure1.configure(highlightcolor="black")
+                Label_departure1.configure(text=f'''{flight[book_id]["Source"]} > {flight_data["name"]}''')
+                Label_departure1.place(relx=0.096, rely=y_loc, height=21, width=150)
 
-        self.Label_departure1 = tk.Label(self.top)
-        self.Label_departure1.place(relx=0.096, rely=0.229, height=21, width=84)
-        self.Label_departure1.configure(activebackground="#f9f9f9")
-        self.Label_departure1.configure(activeforeground="black")
-        self.Label_departure1.configure(anchor='w')
-        self.Label_departure1.configure(background="#e4e4e4")
-        self.Label_departure1.configure(compound='left')
-        self.Label_departure1.configure(disabledforeground="#a3a3a3")
-        self.Label_departure1.configure(foreground="#000000")
-        self.Label_departure1.configure(highlightbackground="#d9d9d9")
-        self.Label_departure1.configure(highlightcolor="black")
-        self.Label_departure1.configure(text='''XXX > XXX''')
+                Label_price1 = tk.Label(self.top)
+                Label_price1.place(relx=0.538, rely=y_loc, height=21, width=44)
+                Label_price1.configure(activebackground="#f9f9f9")
+                Label_price1.configure(activeforeground="black")
+                Label_price1.configure(background="#e4e4e4")
+                Label_price1.configure(compound='left')
+                Label_price1.configure(disabledforeground="#a3a3a3")
+                Label_price1.configure(foreground="#000000")
+                Label_price1.configure(highlightbackground="#d9d9d9")
+                Label_price1.configure(highlightcolor="black")
+                Label_price1.configure(text=f'''{flight_data["price"]}''')
 
-        self.Label_price1 = tk.Label(self.top)
-        self.Label_price1.place(relx=0.538, rely=0.229, height=21, width=44)
-        self.Label_price1.configure(activebackground="#f9f9f9")
-        self.Label_price1.configure(activeforeground="black")
-        self.Label_price1.configure(background="#e4e4e4")
-        self.Label_price1.configure(compound='left')
-        self.Label_price1.configure(disabledforeground="#a3a3a3")
-        self.Label_price1.configure(foreground="#000000")
-        self.Label_price1.configure(highlightbackground="#d9d9d9")
-        self.Label_price1.configure(highlightcolor="black")
-        self.Label_price1.configure(text='''0000''')
+                Button1 = tk.Button(self.top)
+                Button1.place(relx=0.769, rely=y_loc, height=24, width=67)
+                Button1.configure(activebackground="#f9f9f9")
+                Button1.configure(activeforeground="#000000")
+                
+                status_color = ""
+                command = None
+                
+                booking = system.Book_Flight(book_id)
+                # 
+                print(book_id)
+                if(flight[book_id]["Status"] == "Complete"):
+                        status_color = "#b3ff66"
+                        command= lambda arg=booking : self.clickComplete(arg)
+                        
+                        
+                elif(flight[book_id]["Status"] == "Pending"):
+                        status_color = "#FFA500"
+                        command= lambda arg=booking : self.clickPending(arg)
+                        
+                elif(flight[book_id]["Status"] == "Cancel"):
+                        status_color = "#D0312D"
+                        command= lambda arg=booking : self.clickCancel(arg)
+                
+                        
+                
+                Button1.configure(background=status_color)
+                Button1.configure(compound='left')
+                Button1.configure(disabledforeground="#a3a3a3")
+                Button1.configure(foreground="#000000")
+                Button1.configure(highlightbackground="#d9d9d9")
+                Button1.configure(highlightcolor="black")
+                Button1.configure(pady="0")
+                Button1.configure(text=f'''{flight[book_id]["Status"]}''')
+                Button1.configure(command=command)
+                
+                labels_departure.append(Label_departure1)
+                labels_price.append(Label_price1)
+                buttons_price.append(Button1)
+                
+                y_loc += 0.097
 
-        self.Label_departure2 = tk.Label(self.top)
-        self.Label_departure2.place(relx=0.096, rely=0.32, height=21, width=84)
-        self.Label_departure2.configure(activebackground="#f9f9f9")
-        self.Label_departure2.configure(activeforeground="black")
-        self.Label_departure2.configure(anchor='w')
-        self.Label_departure2.configure(background="#e4e4e4")
-        self.Label_departure2.configure(compound='left')
-        self.Label_departure2.configure(disabledforeground="#a3a3a3")
-        self.Label_departure2.configure(foreground="#000000")
-        self.Label_departure2.configure(highlightbackground="#d9d9d9")
-        self.Label_departure2.configure(highlightcolor="black")
-        self.Label_departure2.configure(text='''XXX > XXX''')
+        # self.Button1 = tk.Button(self.top)
+        # self.Button1.place(relx=0.769, rely=0.32, height=24, width=67)
+        # self.Button1.configure(activebackground="#f9f9f9")
+        # self.Button1.configure(activeforeground="#000000")
+        # self.Button1.configure(background="")
+        # self.Button1.configure(compound='left')
+        # self.Button1.configure(disabledforeground="#a3a3a3")
+        # self.Button1.configure(foreground="#ffffff")
+        # self.Button1.configure(highlightbackground="#d9d9d9")
+        # self.Button1.configure(highlightcolor="black")
+        # self.Button1.configure(pady="0")
+        # self.Button1.configure(text=f'''{flight["Status"]}''')
 
-        self.Label_price2 = tk.Label(self.top)
-        self.Label_price2.place(relx=0.538, rely=0.32, height=21, width=44)
-        self.Label_price2.configure(activebackground="#f9f9f9")
-        self.Label_price2.configure(activeforeground="black")
-        self.Label_price2.configure(background="#e4e4e4")
-        self.Label_price2.configure(compound='left')
-        self.Label_price2.configure(disabledforeground="#a3a3a3")
-        self.Label_price2.configure(foreground="#000000")
-        self.Label_price2.configure(highlightbackground="#d9d9d9")
-        self.Label_price2.configure(highlightcolor="black")
-        self.Label_price2.configure(text='''0000''')
+    def back(self):
+        # changePage(self.top,Login_page)
+        pass
 
-        self.Button1 = tk.Button(self.top)
-        self.Button1.place(relx=0.769, rely=0.32, height=24, width=67)
-        self.Button1.configure(activebackground="#f9f9f9")
-        self.Button1.configure(activeforeground="#000000")
-        self.Button1.configure(background="#eb0214")
-        self.Button1.configure(compound='left')
-        self.Button1.configure(disabledforeground="#a3a3a3")
-        self.Button1.configure(foreground="#ffffff")
-        self.Button1.configure(highlightbackground="#d9d9d9")
-        self.Button1.configure(highlightcolor="black")
-        self.Button1.configure(pady="0")
-        self.Button1.configure(text='''Cancel''')
+    def clickPending(self,booking):
+        print(booking)
+        MsgBox = messagebox.askquestion ('WARNING','Do you want to cancel this booking?',icon = 'warning')
+        if MsgBox == 'yes':
+                booking.cancel()
+                changePage(self.top,History_page)
+        
 
-        self.Button1 = tk.Button(self.top)
-        self.Button1.place(relx=0.769, rely=0.229, height=24, width=67)
-        self.Button1.configure(activebackground="#f9f9f9")
-        self.Button1.configure(activeforeground="#000000")
-        self.Button1.configure(background="#b3ff66")
-        self.Button1.configure(compound='left')
-        self.Button1.configure(disabledforeground="#a3a3a3")
-        self.Button1.configure(foreground="#000000")
-        self.Button1.configure(highlightbackground="#d9d9d9")
-        self.Button1.configure(highlightcolor="black")
-        self.Button1.configure(pady="0")
-        self.Button1.configure(text='''Success''')
+    def clickComplete(self,booking):
+        print(booking)
+        MsgBox = messagebox.askquestion ('WARNING','Do you want to cancel this booking?',icon = 'warning')
+        if MsgBox == 'yes':
+                booking.cancel()
+                changePage(self.top,History_page)
+
+    def clickCancel(self,booking):
+        print(booking)
+        pass
 
 def start_up():
     GUI_support.main()
