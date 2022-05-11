@@ -101,6 +101,15 @@ class Flight():
                                 if y == id:
                                         return {"id":e['id'],"name":e['name'],"start":e['start'],"end":e['end'],"price":e['price']}
                 return False
+
+    @staticmethod
+    def getAllDestination():
+                des_list = []
+                fdata = open("./data/Destination-Flight.json")
+                data = json.load(fdata)
+                for i in data['Destination']:
+                    des_list.append(i)
+                return des_list
     
 class Source():
     @staticmethod
