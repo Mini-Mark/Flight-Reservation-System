@@ -10,7 +10,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 from tkinter import messagebox
-
+from datetime import datetime
 import GUI_support
 
 import system
@@ -27,6 +27,7 @@ class Search_page:
         self.top.destroy()
         root = tk.Tk()
         Flight_page(self.combobox.get(), self.combobox1.get(), self.combobox2.get(),root)
+        
 
 
     def __init__(self, top=None):
@@ -175,6 +176,12 @@ class Search_page:
         self.Button_history.configure(highlightcolor="black")
         self.Button_history.configure(pady="0")
         self.Button_history.configure(text='''History''')
+        self.Button_history.configure(command = self.history)
+
+    def history(self):
+        changePage(self.top,History_page)
+
+        
 
 
 class Flight_page:
@@ -211,6 +218,10 @@ class Flight_page:
         
         # system.User.searchFlight(self.source,self.destination)
         flight = user.searchFlight(self.source,self.destination)
+
+        print(flight)
+        print(self.destination)
+        print(self.source)
 
         print(flight[0]["id"])
         print(flight[1]["id"])
@@ -366,7 +377,13 @@ class Flight_page:
         self.Button_choose1.configure(highlightbackground="#d9d9d9")
         self.Button_choose1.configure(highlightcolor="black")
         self.Button_choose1.configure(pady="0")
+        # NOWISHERE
         self.Button_choose1.configure(text='''CHOOSE''')
+
+        command = None
+        command= lambda arg1=self.source,arg2=flight[0]["id"],arg3=self.date : self.sendtobook(arg1,arg2,arg3)
+        self.Button_choose1.configure(command=command)
+
 
         self.Label_price1 = tk.Label(self.Frame1)
         self.Label_price1.place(relx=0.575, rely=0.267, height=21, width=75)
@@ -476,6 +493,10 @@ class Flight_page:
         self.Button_choose2.configure(highlightcolor="black")
         self.Button_choose2.configure(pady="0")
         self.Button_choose2.configure(text='''CHOOSE''')
+        command= lambda arg1=self.source,arg2=flight[1]["id"],arg3=self.date : self.sendtobook(arg1,arg2,arg3)
+        self.Button_choose2.configure(command=command)
+
+
 
         self.Label_price2 = tk.Label(self.Frame2)
         self.Label_price2.place(relx=0.575, rely=0.267, height=21, width=75)
@@ -585,6 +606,8 @@ class Flight_page:
         self.Button_choose3.configure(highlightcolor="black")
         self.Button_choose3.configure(pady="0")
         self.Button_choose3.configure(text='''CHOOSE''')
+        command= lambda arg1=self.source,arg2=flight[2]["id"],arg3=self.date : self.sendtobook(arg1,arg2,arg3)
+        self.Button_choose3.configure(command=command)
 
         self.Label_price3 = tk.Label(self.Frame3)
         self.Label_price3.place(relx=0.575, rely=0.267, height=21, width=75)
@@ -628,6 +651,12 @@ class Flight_page:
         changePage(self.top,History_page)
     def search(self):
         changePage(self.top,Search_page)
+
+    def sendtobook(self,source,destination,date):
+        self.top.destroy()
+        root = tk.Tk()
+        Book_page(root,source,destination,date)
+
 
 class Login_page:
     def __init__(self, top=None):
@@ -992,7 +1021,7 @@ class Register_page:
                 return False
 
 class Book_page:
-    def __init__(self, top=None):
+    def __init__(self, top, Source, FlightID, Date):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -1043,11 +1072,11 @@ class Book_page:
         self.Button_book.configure(highlightcolor="black")
         self.Button_book.configure(pady="0")
         self.Button_book.configure(text='''BOOK''')
-        waitflightid = '01-HDY'
-        a = system.Flight.getFlightById(waitflightid)['name']
-        waitsource = "Bankok"
-        waituserid = '1'
-        self.Button_book.configure(command=(system.Book_Flight.book(waitsource,a,waitflightid,waituserid,'pending') and self.payment))
+        waitflightid = FlightID
+        des = system.Flight.getFlightById(waitflightid)['name']
+        waitsource = Source
+        waituserid = system.Account.getLoginUser()
+        self.Button_book.configure(command=(system.Book_Flight.book(waitsource,des,Date,waitflightid,waituserid,'Pending') and self.payment))
 
         self.Label_details = tk.Label(self.top)
         self.Label_details.place(relx=0.192, rely=0.092, height=23, width=334)
@@ -1085,7 +1114,7 @@ class Book_page:
         self.Label_date.configure(foreground="#000000")
         self.Label_date.configure(highlightbackground="#d9d9d9")
         self.Label_date.configure(highlightcolor="black")
-        waittime ="10/05/22"
+        waittime = Date
         self.Label_date.configure(text=waittime)
 
         self.Label_baht = tk.Label(self.top)
@@ -1235,11 +1264,12 @@ class Book_page:
         changePage(self.top,Payment_page)
     def history(self):
         changePage(self.top,History_page)
+
     def back(self):
-        changePage(self.top,Flight_page)
+        changePage(self.top,Search_page)
 
 class Payment_page:
-    def __init__(self, top=None):
+    def __init__(self, top=None, bookid=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -1252,6 +1282,16 @@ class Payment_page:
         screen_height = top.winfo_screenheight()
         x_cordinate = int((screen_width/2) - (520/2))
         y_cordinate = int((screen_height/2) - (437/2))
+        
+        waitbooktid = None
+        
+        if(bookid):
+                waitbooktid = bookid
+                self.Book_id = waitbooktid
+        else:
+                waitbooktid = system.Book_Flight.countAllBookData()
+                self.Book_id = waitbooktid
+        
         
         top.geometry(f"520x437+{x_cordinate}+{y_cordinate}")
         top.minsize(120, 1)
@@ -1276,6 +1316,24 @@ class Payment_page:
         self.Button_cancel.configure(highlightcolor="black")
         self.Button_cancel.configure(pady="0")
         self.Button_cancel.configure(text='''Cancel''')
+        self.Button_cancel.configure(command=self.cancel)
+        
+
+        self.Button_back = tk.Button(self.top)
+        self.Button_back.place(relx=0.038, rely=0.046, height=24, width=47)
+        self.Button_back.configure(activebackground="#ececec")
+        self.Button_back.configure(activeforeground="#000000")
+        self.Button_back.configure(background="#d9d9d9")
+        self.Button_back.configure(compound='left')
+        self.Button_back.configure(disabledforeground="#a3a3a3")
+        self.Button_back.configure(foreground="#000000")
+        self.Button_back.configure(highlightbackground="#d9d9d9")
+        self.Button_back.configure(highlightcolor="black")
+        self.Button_back.configure(pady="0")
+        self.Button_back.configure(text='''BACK''')
+        self.Button_back.configure(command=self.back)
+
+        
 
         self.Button_confirm = tk.Button(self.top)
         self.Button_confirm.place(relx=0.539, rely=0.714, height=34, width=77)
@@ -1289,6 +1347,9 @@ class Payment_page:
         self.Button_confirm.configure(highlightcolor="black")
         self.Button_confirm.configure(pady="0")
         self.Button_confirm.configure(text='''Confirm''')
+        
+        self.Button_confirm.configure(command=self.clickConfirm)
+
 
         self.Label_payment = tk.Label(self.top)
         self.Label_payment.place(relx=0.216, rely=0.055, height=17, width=218)
@@ -1313,7 +1374,7 @@ class Payment_page:
         self.Label_origin.configure(foreground="#000000")
         self.Label_origin.configure(highlightbackground="#d9d9d9")
         self.Label_origin.configure(highlightcolor="black")
-        waitbooktid = system.Book_Flight.getAllBookData()
+        
         self.Label_origin.configure(text=system.Book_Flight.getBookDetailById(waitbooktid)['Source'])
 
         self.Label1 = tk.Label(self.top)
@@ -1339,6 +1400,7 @@ class Payment_page:
         self.Label_destination.configure(foreground="#000000")
         self.Label_destination.configure(highlightbackground="#d9d9d9")
         self.Label_destination.configure(highlightcolor="black")
+        
         self.Label_destination.configure(text=system.Book_Flight.getBookDetailById(waitbooktid)['Destination'])
 
         self.Label_depart = tk.Label(self.top)
@@ -1471,10 +1533,22 @@ class Payment_page:
         self.Label2_2.configure(highlightcolor="black")
         self.Label2_2.configure(text='''--------------------------------------------------------''')
 
+    def clickConfirm(self):
+        system.Book_Flight(system.Book_Flight.countAllBookData()).pay()
+        changePage(self.top,History_page)
+    
+
+    def back(self):
+        changePage(self.top,Search_page)
+        
+    def cancel(self):
+        system.Book_Flight(self.Book_id).cancel()
+        changePage(self.top,History_page)
+
 class History_page:
     def __init__(self, top=None):
             
-        user_id = "1"
+        user_id = system.Account.getLoginUser()
             
             
         '''This class configures and populates the toplevel window.
@@ -1646,16 +1720,13 @@ class History_page:
         # self.Button1.configure(text=f'''{flight["Status"]}''')
 
     def back(self):
-        # changePage(self.top,Login_page)
-        pass
+        changePage(self.top,Search_page)
 
     def clickPending(self,booking):
-        print(booking)
-        MsgBox = messagebox.askquestion ('WARNING','Do you want to cancel this booking?',icon = 'warning')
-        if MsgBox == 'yes':
-                booking.cancel()
-                changePage(self.top,History_page)
-        
+        print(booking.Book_id)
+        self.top.destroy()
+        root = tk.Tk()
+        Payment_page(root,booking.Book_id)
 
     def clickComplete(self,booking):
         print(booking)
@@ -1673,8 +1744,3 @@ def start_up():
 
 if __name__ == '__main__':
     GUI_support.main()
-
-
-
-
-
