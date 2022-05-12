@@ -20,7 +20,8 @@ from PIL import Image, ImageTk
 import searchGUI
 
 import register
-        
+
+
 class Login_page:
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
@@ -59,42 +60,62 @@ class Login_page:
         self.Entry_pass.configure(show="*")
 
         self.Button_login = tk.Button(self.top)
-        self.Button_login.place(relx=0.419, rely=0.567, height=44, width=137)
-        self.Button_login.configure(activebackground="#004aad")
+        self.Button_login.place(relx=0.313, rely=0.567,
+                                height=44, relwidth=0.38)
+        self.Button_login.configure(activebackground="#376D8A")
         self.Button_login.configure(activeforeground="#ffffff")
         self.Button_login.configure(background="#ffffff")
         self.Button_login.configure(compound='left')
-        self.Button_login.configure(font="-family {Arial} -size 17 -weight bold")
-        self.Button_login.configure(foreground="#004aad")
+        self.Button_login.configure(
+            font="-family {Arial} -size 17 -weight bold")
+        self.Button_login.configure(foreground="#5792b2")
         self.Button_login.configure(pady="0")
         self.Button_login.configure(text='''Login''')
         self.Button_login.configure(command=self.login)
+        self.Button_login.configure(highlightthickness=0, bd=0)
 
         self.Button_register = tk.Button(self.top)
-        self.Button_register.place(relx=0.344, rely=0.75, height=44, width=247)
-        self.Button_register.configure(activebackground="#ffffff")
-        self.Button_register.configure(activeforeground="#d4b1c2")
-        self.Button_register.configure(background="#d4b1c2")
+        self.Button_register.place(
+            relx=0.313, rely=0.66, height=44, relwidth=0.38)
+        self.Button_register.configure(activebackground="#376D8A")
+        self.Button_register.configure(activeforeground="#E0E0E0")
+        self.Button_register.configure(background="#ffffff")
         self.Button_register.configure(compound='left')
-        self.Button_register.configure(font="-family {Arial} -size 17 -weight bold")
-        self.Button_register.configure(foreground="#ffffff")
+        self.Button_register.configure(
+            font="-family {Arial} -size 17 -weight bold")
+        self.Button_register.configure(foreground="#5792b2")
         self.Button_register.configure(pady="0")
         self.Button_register.configure(text='''Register''')
         self.Button_register.configure(command=self.register)
-    
+        self.Button_register.configure(highlightthickness=0, bd=0)
+
+        self.Button_guest = tk.Button(self.top)
+        self.Button_guest.place(
+            relx=0.313, rely=0.753, height=44, relwidth=0.38)
+        self.Button_guest.configure(activebackground="#376D8A")
+        self.Button_guest.configure(activeforeground="#E0E0E0")
+        self.Button_guest.configure(background="#ffffff")
+        self.Button_guest.configure(compound='left')
+        self.Button_guest.configure(
+            font="-family {Arial} -size 17 -weight bold")
+        self.Button_guest.configure(foreground="#5792b2")
+        self.Button_guest.configure(pady="0")
+        self.Button_guest.configure(text='''Guest''')
+        self.Button_guest.configure(command=self.guest)
+        self.Button_guest.configure(highlightthickness=0, bd=0)
+
     def login(self):
-        user = backend.Account().login(self.Entry_user.get(),self.Entry_pass.get())
-        
+        user = backend.Account().login(self.Entry_user.get(), self.Entry_pass.get())
+
         if(user != False):
-                messagebox.showinfo("SUCCESS", "Login Success !!")
-                main.changePage(self.top,searchGUI.search_page)
+            messagebox.showinfo("SUCCESS", "Login Success !!")
+            main.changePage(self.top, searchGUI.search_page)
         else:
-                messagebox.showerror("ERROR", "Username or password have something wrong!")
-        
+            messagebox.showerror(
+                "ERROR", "Username or password have something wrong!")
 
     def register(self):
-        main.changePage(self.top,register.Register_page)
-
-
-
-
+        main.changePage(self.top, register.Register_page)
+        
+    def guest(self):
+        main.changePage(self.top, searchGUI.search_page)

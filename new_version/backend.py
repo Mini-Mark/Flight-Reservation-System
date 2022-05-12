@@ -15,7 +15,10 @@ class Account:
         self.username = username
         self.password = password
 
-        if(self.username == "" or self.password == ""):
+        if(self.username == "Guest"):
+            return 0
+        
+        elif(self.username == "" or self.password == ""):
             return False
 
         for i in data['user']:

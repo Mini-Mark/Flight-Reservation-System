@@ -7,6 +7,7 @@
 
 import sys
 import tkinter as tk
+from tkinter import messagebox
 import tkinter.ttk as ttk
 from tkinter.constants import *
 import Flightpage_support
@@ -167,7 +168,10 @@ class search_page:
         self.Button_search.configure(command=self.searchFlight)
 
     def history(self):
-        main.changePage(self.top, history.History_page)
+        if(backend.Account.getLoginUser() != "0"):
+            main.changePage(self.top, history.History_page)
+        else:
+            messagebox.showerror("ERROR", "This page is not allowed for guest")
 
     def searchFlight(self):
         source = self.TCombobox_origin.get()

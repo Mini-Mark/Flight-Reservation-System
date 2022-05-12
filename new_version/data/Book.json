@@ -125,7 +125,7 @@
         "Destination": "Phetchabun ",
         "Date": "5/20/22",
         "User_ID": "2",
-        "Status": "Complete"
+        "Status": "Cancel"
     },
     "17": {
         "Flight_ID": "03-CNX",
@@ -141,7 +141,7 @@
         "Destination": "Nakhon Ratchasima ",
         "Date": "5/15/22",
         "User_ID": "2",
-        "Status": "Pending"
+        "Status": "Complete"
     },
     "19": {
         "Flight_ID": "01-CEI",

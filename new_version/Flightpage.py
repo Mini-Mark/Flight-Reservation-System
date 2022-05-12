@@ -6,6 +6,7 @@
 #    May 12, 2022 02:31:20 AM +07  platform: Windows NT
 
 import tkinter as tk
+from tkinter import messagebox
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
@@ -345,8 +346,11 @@ class FlightPageUI:
         main.changePage(self.top,searchGUI.search_page)
         
     def sendtobook(self,source,destination,date):
-        self.top.destroy()
-        ViewFlight_support.main(source,destination,date)
+        if(backend.Account.getLoginUser() != "0"):
+            self.top.destroy()
+            ViewFlight_support.main(source,destination,date)
+        else:
+            messagebox.showerror("ERROR", "This page is not allowed for guest")
 
 
 def start_up():
