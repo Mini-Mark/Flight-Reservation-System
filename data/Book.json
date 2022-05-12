@@ -46,21 +46,5 @@
         "Date": "5/5/22",
         "User_ID": "1",
         "Status": "Complete"
-    },
-    "7": {
-        "Flight_ID": "03-CJM",
-        "Source": "tak",
-        "Destination": "Chumphon Airport",
-        "Date": "5/7/22",
-        "User_ID": "1",
-        "Status": "Complete"
-    },
-    "8": {
-        "Flight_ID": "01-BKK",
-        "Source": "chumphon",
-        "Destination": "Suvarnabhumi airport",
-        "Date": "5/7/22",
-        "User_ID": "1",
-        "Status": "Pending"
     }
 }
