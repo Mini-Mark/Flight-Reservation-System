@@ -23,7 +23,7 @@ The Flight Reservation System is a Python-based application designed to facilita
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/flight-reservation-system.git
+    git clone https://github.com/Mini-Mark/FoodPenguin.git
     cd flight-reservation-system/release
     ```
 
